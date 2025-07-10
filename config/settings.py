@@ -1,12 +1,16 @@
+import os
+from datetime import timedelta
 from pathlib import Path
+from dotenv import load_dotenv
 
+load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure--f_sek#2fulup!z=_g2wf!z8$7-^!u**7cp)-g@bsyrlg#3wbv'
+SECRET_KEY = os.getenv('SECRET_KEY', '')
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', '')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -89,3 +93,17 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 15
+}
+
+SIMPLE_JWT = {
+    'ALGORITHM': 'HS256',
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=300),
+    'SLIDING_TOKEN__REFRESH_LIFETIME': timedelta(days=1)
+}
