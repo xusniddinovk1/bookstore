@@ -109,3 +109,8 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=300),
     'SLIDING_TOKEN__REFRESH_LIFETIME': timedelta(days=1)
 }
+
+AUTHENTICATION_BACKENDS = [
+    'users.authentication.PhoneNumberBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
