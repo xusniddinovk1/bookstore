@@ -114,3 +114,15 @@ AUTHENTICATION_BACKENDS = [
     'users.authentication.PhoneNumberBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'JWT format: Bearer <token>',
+        }
+    },
+    'USE_SESSION_AUTH': False,
+}
