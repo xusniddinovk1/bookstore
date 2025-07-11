@@ -2,7 +2,7 @@ from users.models import CustomUser
 from rest_framework import serializers
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
