@@ -9,10 +9,18 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 
 class BookSerializer(serializers.ModelSerializer):
-    author = AuthorSerializer(write_only=True)
-    author_id = serializers.PrimaryKeyRelatedField(
-        queryset=Author.objects.all(), source='author', write_only=True
-    )
+    author = AuthorSerializer(read_only=True)
+
     class Meta:
         model = Book
-        fields = ['id', 'title', 'author', 'author_id', 'price', 'created_at']
+        fields = ['id', 'title', 'author', 'price', 'created_at']
+
+
+class BookCreateSerializer(serializers.ModelSerializer):
+    author_id = serializers.PrimaryKeyRelatedField(
+        queryset=Author.objects.all(), source='author'
+    )
+
+    class Meta:
+        model = Book
+        fields = ['title', 'author_id', 'price']
