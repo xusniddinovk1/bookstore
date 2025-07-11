@@ -1,6 +1,5 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from users.models import CustomUser
 from django.core.validators import RegexValidator
 
 phone_regex = RegexValidator(
