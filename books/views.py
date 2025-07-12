@@ -1,3 +1,4 @@
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets
 from books.serializers import AuthorSerializer, BookSerializer, BookCreateSerializer
@@ -32,3 +33,14 @@ class BookViewSet(viewsets.ModelViewSet):
         if self.action in ['create', 'update', 'partial_update']:
             return BookCreateSerializer
         return BookSerializer
+
+    @action(detail=True, methods=['get'])
+    def avg_rating(self, request, pk=None):
+        book = self.get_object()
+        comments = book.comments.all()  # To'g'ri manager
+
+        if comments.count() == 0:
+            return Response({'average_rating': 'No comments yet'})
+
+        avg_rating = sum([comment.rating for comment in comments]) / comments.count()
+        return Response({'average_rating': round(avg_rating, 2)})
