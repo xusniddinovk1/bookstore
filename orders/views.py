@@ -9,5 +9,8 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     permission_classes = [IsOwnerOrReadOnly]
 
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user)
+
     def perform_create(self, serializer):
         return serializer.save(user=self.request.user)
