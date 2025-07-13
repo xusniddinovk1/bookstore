@@ -25,7 +25,7 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=STATUS, default=PENDING)
 
     phone_number = models.CharField(validators=[phone_regex], max_length=13)
-    is_paid = models.CharField(default=False)
+    is_paid = models.BooleanField(default=False)
 
     def set_status(self, new_status):
         if new_status not in dict(self.STATUS):
