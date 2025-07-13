@@ -18,9 +18,12 @@ class AuthorViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         books = Book.objects.filter(author=instance).values_list('title', flat=True)[:3]
+        related_books = Book.objects.filter(book=instance).exclude(id=instance.id)[:3]
+        related_serializer = BookSerializer(related_books, many=True)
         return Response({
             'author': serializer.data,
-            'books': list(books)
+            'books': list(books),
+            'related_books': related_serializer.data
         })
 
 
@@ -33,6 +36,16 @@ class BookViewSet(viewsets.ModelViewSet):
         if self.action in ['create', 'update', 'partial_update']:
             return BookCreateSerializer
         return BookSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        related_books = Book.objects.filter(author=instance.author).exclude(id=instance.id)[:3]
+        related_serializer = BookSerializer(related_books, many=True)
+        return Response({
+            'book': serializer.data,
+            'related_books': related_serializer.data
+        })
 
     @action(detail=True, methods=['get'])
     def avg_rating(self, request, pk=None):
