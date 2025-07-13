@@ -4,6 +4,7 @@ from .models import Order
 
 class OrderSerializer(serializers.ModelSerializer):
     total_price = serializers.SerializerMethodField()
+    user = serializers.ReadOnlyField(source='user.username')
 
     class Meta:
         model = Order
