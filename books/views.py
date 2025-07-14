@@ -1,11 +1,17 @@
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets
-from books.serializers import AuthorSerializer, BookSerializer, BookCreateSerializer
+from books.serializers import AuthorSerializer, BookSerializer, BookCreateSerializer, CategorySerializer
 from books.permissions import IsAdminOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from books.models import Author, Book
+from books.models import Author, Book, Category
 from books.pagination import Pagination
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
