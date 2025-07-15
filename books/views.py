@@ -11,6 +11,7 @@ from books.permissions import IsAdminOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from books.models import Author, Book, Category
 from books.pagination import Pagination
+from django.db import models
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -72,6 +73,12 @@ class BookViewSet(viewsets.ModelViewSet):
             'book': serializer.data,
             'related_books': related_serializer.data
         })
+
+    @action(detail=False, methods=['get'])
+    def top_rated(self, request):
+        top_books = Book.objects.annotate(avg_rating=models.Avg('comments__rating')).order_by('-avg_rating')[:4]
+        serializers = BookSerializer(top_books, many=True)
+        return Response(serializers.data)
 
     @action(detail=True, methods=['get'])
     def avg_rating(self, request, pk=None):
