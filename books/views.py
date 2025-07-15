@@ -43,7 +43,7 @@ class BookViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
 
     filter_backends = (django_filters.DjangoFilterBackend, filters.SearchFilter)
-    filter_class = BookFilter
+    filterset_class = BookFilter
     search_fields = ['title', 'description']
 
     def get_serializer_class(self):
