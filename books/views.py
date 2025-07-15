@@ -1,6 +1,10 @@
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets
+from django_filters import rest_framework as django_filters
+from rest_framework import filters
+
+from books.filters import BookFilter
 from books.serializers import AuthorSerializer, BookSerializer, BookCreateSerializer, CategorySerializer
 from books.permissions import IsAdminOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -37,6 +41,10 @@ class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     pagination_class = Pagination
     permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
+
+    filter_backends = (django_filters.DjangoFilterBackend, filters.SearchFilter)
+    filter_class = BookFilter
+    search_fields = ['title', 'description']
 
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
