@@ -1,9 +1,10 @@
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets
 from django_filters import rest_framework as django_filters
 from rest_framework import filters
-
 from books.filters import BookFilter
 from books.serializers import AuthorSerializer, BookSerializer, BookCreateSerializer, CategorySerializer
 from books.permissions import IsAdminOrReadOnly
@@ -50,6 +51,17 @@ class BookViewSet(viewsets.ModelViewSet):
         if self.action in ['create', 'update', 'partial_update']:
             return BookCreateSerializer
         return BookSerializer
+
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('min_price', openapi.IN_QUERY, description="Narxdan katta yoki teng",
+                          type=openapi.TYPE_NUMBER),
+        openapi.Parameter('max_price', openapi.IN_QUERY, description="Narxdan kichik yoki teng",
+                          type=openapi.TYPE_NUMBER),
+        openapi.Parameter('category', openapi.IN_QUERY, description="Kategoriya nomi (qisman)",
+                          type=openapi.TYPE_STRING),
+    ])
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
