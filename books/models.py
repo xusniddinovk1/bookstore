@@ -20,6 +20,7 @@ class Book(models.Model):
     title = models.CharField(max_length=100, unique=True)
     description = models.TextField()
     author = models.ForeignKey(Author, related_name='books', on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name='books', on_delete=models.SET_NULL, null=True)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     stock = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
