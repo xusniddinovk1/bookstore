@@ -7,6 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
+from .filters import OrderFilter
 from .serializers import OrderSerializer
 from .models import Order
 from rest_framework import viewsets
@@ -16,6 +17,8 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
+    filterset_class = OrderFilter
+    ordering_fields = ['created_at']
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)

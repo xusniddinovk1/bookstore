@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from django_filters import rest_framework as django_filters
 from rest_framework import filters
-from books.filters import BookFilter
+from books.filters import BookFilter, AuthorFilter, CategoryFilter
 from books.serializers import AuthorSerializer, BookSerializer, BookCreateSerializer, CategorySerializer
 from books.permissions import IsAdminOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -18,6 +18,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
+    filterset_class = CategoryFilter
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
@@ -25,6 +26,8 @@ class AuthorViewSet(viewsets.ModelViewSet):
     serializer_class = AuthorSerializer
     pagination_class = Pagination
     permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
+    filterset_class = AuthorFilter
+    search_fields = ['name']
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -47,6 +50,7 @@ class BookViewSet(viewsets.ModelViewSet):
     filter_backends = (django_filters.DjangoFilterBackend, filters.SearchFilter)
     filterset_class = BookFilter
     search_fields = ['title', 'description']
+    ordering_fields = ['price', 'created_at']
 
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
