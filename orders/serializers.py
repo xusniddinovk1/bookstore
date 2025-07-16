@@ -1,17 +1,15 @@
 from rest_framework import serializers
-
 from books.models import Book
 from .models import Order, OrderItem
 from .tasks import send_order_to_telegram
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())  # Muhim!
+    book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())
 
     class Meta:
         model = OrderItem
         fields = ['book', 'quantity']
-
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -43,7 +41,6 @@ class OrderSerializer(serializers.ModelSerializer):
 
             OrderItem.objects.create(order=order, book=book, quantity=quantity)
 
-            # Reduce stock
             book.stock -= quantity
             book.save()
 

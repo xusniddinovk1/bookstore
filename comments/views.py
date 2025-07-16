@@ -1,7 +1,6 @@
 from rest_framework.exceptions import ValidationError
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-
 from comments.filters import CommentFilter
 from comments.serializers import CommentSerializer
 from comments.models import Comment

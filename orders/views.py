@@ -1,12 +1,9 @@
 import io
-import xlsxwriter
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.response import Response
-
 from .filters import OrderFilter
 from .serializers import OrderSerializer
 from .models import Order
