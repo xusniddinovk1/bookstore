@@ -38,43 +38,6 @@ class OrderViewSet(viewsets.ModelViewSet):
         order.set_status(new_status)
         return Response({'detail': f'Status changed to {new_status}'}, status=200)
 
-    @action(detail=False, methods=['get'], url_path='export/excel', permission_classes=[IsAdminUser])
-    def export_excel(self, request):
-        output = io.BytesIO()
-        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
-        worksheet = workbook.add_worksheet('Orders')
-
-        # Header
-        headers = ['Order ID', 'Username', 'Phone', 'Book', 'Quantity', 'Status', 'Paid', 'Date']
-        for col_num, header in enumerate(headers):
-            worksheet.write(0, col_num, header)
-
-        # Data rows
-        orders = Order.objects.select_related('user').prefetch_related('items__book')
-
-        row = 1
-        for order in orders:
-            for item in order.items.all():
-                worksheet.write(row, 0, order.id)
-                worksheet.write(row, 1, order.user.username)
-                worksheet.write(row, 2, order.phone_number)
-                worksheet.write(row, 3, item.book.title)
-                worksheet.write(row, 4, item.quantity)
-                worksheet.write(row, 5, order.status)
-                worksheet.write(row, 6, 'Yes' if order.is_paid else 'No')
-                worksheet.write(row, 7, order.created_at.strftime('%Y-%m-%d %H:%M'))
-                row += 1
-
-        workbook.close()
-        output.seek(0)
-
-        response = HttpResponse(
-            output.read(),
-            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
-        response['Content-Disposition'] = 'attachment; filename=orders.xlsx'
-        return response
-
     @action(detail=False, methods=['get'], url_path='export/pdf', permission_classes=[IsAdminUser])
     def export_pdf(self, request):
         buffer = io.BytesIO()
@@ -91,13 +54,17 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         for order in orders:
             for item in order.items.all():
-                if y < 50:
+                if y < 60:
                     p.showPage()
                     y = height - 50
                     p.setFont("Helvetica", 10)
 
-                line = f"#{order.id} | {order.user.username} | {order.phone_number} | " \
-                       f"{item.book.title} x{item.quantity} | {order.status} | {'Paid' if order.is_paid else 'Not Paid'}"
+                total_price = item.quantity * item.book.price
+                line = (
+                    f"#{order.id} | {order.user.username} | {item.book.title} x{item.quantity} | "
+                    f"{order.status} | {'Paid' if order.is_paid else 'Not Paid'} | "
+                    f"Total: {total_price} so'm"
+                )
                 p.drawString(50, y, line)
                 y -= 20
 
