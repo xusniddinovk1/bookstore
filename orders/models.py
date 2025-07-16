@@ -19,11 +19,8 @@ class Order(models.Model):
     )
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    amount = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS, default=PENDING)
-
     phone_number = models.CharField(validators=[phone_regex], max_length=13)
     is_paid = models.BooleanField(default=False)
 
@@ -42,4 +39,13 @@ class Order(models.Model):
         return new_status in allowed_transition.get(self.status, [])
 
     def __str__(self):
-        return f'{self.user} ordered {self.book}'
+        return f'Order #{self.id} by {self.user}'
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f'{self.book.title} x {self.quantity}'
