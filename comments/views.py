@@ -16,7 +16,6 @@ class CommentViewSet(viewsets.ModelViewSet):
         user = self.request.user
         book = serializer.validated_data['book']
 
-        # ❗ Faqat sotib olingan kitobga izoh qoldirish mumkin
         if not OrderItem.objects.filter(order__user=user, book=book).exists():
             raise ValidationError("Siz bu kitobni sotib olmagansiz, izoh qoldirolmaysiz.")
 
