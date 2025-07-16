@@ -133,3 +133,6 @@ SWAGGER_SETTINGS = {
     },
     'USE_SESSION_AUTH': False,
 }
+
+TELEGRAM_BOT_TOKEN = os.getenv('BOT_TOKEN')
+TELEGRAM_CHAT_ID = os.getenv('CHAT_ID')
