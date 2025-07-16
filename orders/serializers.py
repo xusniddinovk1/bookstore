@@ -1,44 +1,44 @@
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
 from .models import Order, OrderItem
-from books.models import Book
-
-
-class OrderSerializer(serializers.ModelSerializer):
-    total_price = serializers.SerializerMethodField()
-    user = serializers.ReadOnlyField(source='user.username')
-
-    class Meta:
-        model = Order
-        fields = ['id', 'user', 'phone_number', 'book', 'amount', 'total_price', 'is_paid', 'created_at']
-        read_only_fields = ['user', 'status', 'total_price', 'created_at']
-
-    def get_total_price(self, obj):
-        return obj.book.price * obj.amount
-
-    def validate_quantity(self, value):
-        try:
-            book_id = self.initial_data['book']
-            book = Book.objects.get(id=book_id)
-
-            if value > book.stock:
-                raise serializers.ValidationError('Not enough items in stock')
-            if value < 1:
-                raise serializers.ValidationError('Value must be at least 1')
-            return value
-        except ObjectDoesNotExist:
-            return serializers.ValidationError('Book does not exist')
-
-    def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
-        order = Order.objects.create(**validated_data)
-        book = order.book
-        book.stock -= order.amount
-        book.save()
-        return order
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = ['book', 'quantity']
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    items = OrderItemSerializer(many=True)  # nested
+    total_price = serializers.SerializerMethodField()
+    user = serializers.ReadOnlyField(source='user.username')
+
+    class Meta:
+        model = Order
+        fields = ['id', 'user', 'phone_number', 'items', 'total_price', 'is_paid', 'created_at']
+        read_only_fields = ['user', 'total_price', 'created_at']
+
+    def get_total_price(self, obj):
+        return sum([item.book.price * item.quantity for item in obj.items.all()])
+
+    def create(self, validated_data):
+        items_data = validated_data.pop('items')
+        user = self.context['request'].user
+        order = Order.objects.create(user=user, **validated_data)
+
+        for item_data in items_data:
+            book = item_data['book']
+            quantity = item_data['quantity']
+
+            if quantity > book.stock:
+                raise serializers.ValidationError(
+                    f"Book '{book.title}' only has {book.stock} in stock."
+                )
+
+            OrderItem.objects.create(order=order, book=book, quantity=quantity)
+
+            # Reduce stock
+            book.stock -= quantity
+            book.save()
+
+        return order
