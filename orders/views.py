@@ -23,21 +23,6 @@ class OrderViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save()
 
-    @action(detail=True, methods=['post'], url_path='change-status', permission_classes=[IsAdminUser])
-    def change_status(self, request, pk=None):
-        order = self.get_object()
-        new_status = request.data.get('status')
-
-        if not new_status:
-            return Response({'detail': 'Status is required'}, status=400)
-
-        if not order.is_transition_allowed(new_status):
-            return Response({'detail': f'Status "{new_status}" not allowed from current status "{order.status}"'},
-                            status=400)
-
-        order.set_status(new_status)
-        return Response({'detail': f'Status changed to {new_status}'}, status=200)
-
     @action(detail=False, methods=['get'], url_path='export/pdf', permission_classes=[IsAdminUser])
     def export_pdf(self, request):
         buffer = io.BytesIO()
