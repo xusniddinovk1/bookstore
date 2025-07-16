@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'django_filters',
     'drf_yasg',
+    'rest_framework_simplejwt.token_blacklist',
 
     'books',
     'comments',
@@ -110,7 +111,9 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     'ALGORITHM': 'HS256',
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=300),
-    'SLIDING_TOKEN__REFRESH_LIFETIME': timedelta(days=1)
+    'SLIDING_TOKEN__REFRESH_LIFETIME': timedelta(days=1),
+
+    "BLACKLIST_AFTER_ROTATION": True,
 }
 
 AUTHENTICATION_BACKENDS = [
