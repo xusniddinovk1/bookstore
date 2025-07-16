@@ -1,3 +1,4 @@
+from drf_yasg import openapi
 from rest_framework.views import APIView
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
@@ -40,6 +41,17 @@ class LoginView(APIView):
 class LogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="Logout user by blacklisting the refresh token.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['refresh'],
+            properties={
+                'refresh': openapi.Schema(type=openapi.TYPE_STRING, description='Refresh token')
+            },
+        ),
+        responses={205: 'Successfully logged out', 400: 'Bad request'}
+    )
     def post(self, request):
         try:
             refresh_token = request.data["refresh"]
@@ -47,5 +59,4 @@ class LogoutView(APIView):
             token.blacklist()
             return Response({"detail": "Successfully logged out."}, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
-            return Response({"error": "Invalid refresh token or already blacklisted."},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
