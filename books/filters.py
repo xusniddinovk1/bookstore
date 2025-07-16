@@ -1,5 +1,5 @@
 from django_filters import rest_framework as django_filters
-from books.models import Book
+from books.models import Book, Author, Category
 
 
 class BookFilter(django_filters.FilterSet):
@@ -10,3 +10,15 @@ class BookFilter(django_filters.FilterSet):
     class Meta:
         model = Book
         fields = ['category', 'max_price', 'min_price']
+
+
+class AuthorFilter(django_filters.FilterSet):
+    class Meta:
+        model = Author
+        fields = ['name']
+
+
+class CategoryFilter(django_filters.FilterSet):
+    class Meta:
+        model = Category
+        fields = ['name']
