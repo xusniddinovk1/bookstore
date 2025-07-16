@@ -28,4 +28,4 @@ def send_order_to_telegram(order):
     try:
         requests.post(url, data=payload, timeout=5)
     except requests.RequestException:
-        pass  # logging qilsa ham bo'ladi
+        pass
