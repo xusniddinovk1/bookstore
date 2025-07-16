@@ -21,7 +21,7 @@ class BookSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Book
-        fields = ['id', 'title', 'author', 'price', 'avg_rating', 'stock', 'created_at']
+        fields = ['id', 'title', 'author', 'category', 'price', 'avg_rating', 'stock', 'created_at']
 
     def get_avg_rating(self, obj):
         avg = obj.comments.aggregate(avg=Avg('rating'))['avg']
@@ -35,4 +35,4 @@ class BookCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Book
-        fields = ['title', 'author_id', 'price', 'stock']
+        fields = ['title', 'author_id', 'category', 'price', 'stock']

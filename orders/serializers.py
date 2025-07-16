@@ -1,11 +1,16 @@
 from rest_framework import serializers
+
+from books.models import Book
 from .models import Order, OrderItem
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
+    book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())  # Muhim!
+
     class Meta:
         model = OrderItem
         fields = ['book', 'quantity']
+
 
 
 class OrderSerializer(serializers.ModelSerializer):
