@@ -1,6 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import serializers
-from .models import Order
+from .models import Order, OrderItem
 from books.models import Book
 
 
@@ -36,3 +36,9 @@ class OrderSerializer(serializers.ModelSerializer):
         book.stock -= order.amount
         book.save()
         return order
+
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItem
+        fields = ['book', 'quantity']
