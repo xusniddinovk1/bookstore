@@ -1,5 +1,4 @@
 import io
-
 import xlsxwriter
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import A4
