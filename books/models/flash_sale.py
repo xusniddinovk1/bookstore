@@ -13,4 +13,6 @@ class FlashSale(models.Model):
         return self.start_time <= now <= self.end_time
 
     class Meta:
-        unique_together = ('book', 'start_time', 'end_time')
+        constraints = [
+            models.UniqueConstraint(fields=['book', 'start_time', 'end_time'], name='unique_flashsale_period')
+        ]
