@@ -6,10 +6,11 @@ from rest_framework import viewsets
 from django_filters import rest_framework as django_filters
 from rest_framework import filters
 from books.filters import BookFilter, AuthorFilter, CategoryFilter
-from books.serializers import AuthorSerializer, BookSerializer, BookCreateSerializer, CategorySerializer
+from books.serializers import AuthorSerializer, BookSerializer, BookCreateSerializer, CategorySerializer, \
+    FlashSaleSerializer
 from books.permissions import IsAdminOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from books.models import Author, Book, Category
+from books.models import Author, Book, Category, FlashSale
 from books.pagination import Pagination
 from django.db import models
 
@@ -40,6 +41,11 @@ class AuthorViewSet(viewsets.ModelViewSet):
             'books': list(books),
             'related_books': related_serializer.data
         })
+
+
+class FlashSaleViewSet(viewsets.ModelViewSet):
+    queryset = FlashSale.objects.all()
+    serializer_class = FlashSaleSerializer
 
 
 class BookViewSet(viewsets.ModelViewSet):
