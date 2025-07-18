@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.timezone import now
 
 
 class Author(models.Model):
@@ -27,6 +28,16 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_active_flash_sale(self):
+        return self.flashsale_set.filter(start_time__lte=now(), end_time__gte=now()).first()
+
+    def get_discounted_price(self):
+        flash_sale = self.get_active_flash_sale()
+        if flash_sale:
+            discount = (self.price * flash_sale.discount_percentage) / 100
+            return self.price - discount
+        return self.price
 
     def is_in_stock(self):
         return self.stock > 0
