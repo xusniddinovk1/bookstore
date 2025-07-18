@@ -13,4 +13,4 @@ class FlashSale(models.Model):
         return self.start_time <= now <= self.end_time
 
     class Meta:
-        unique_together = ('product', 'start_time', 'end_time')
+        unique_together = ('book', 'start_time', 'end_time')
