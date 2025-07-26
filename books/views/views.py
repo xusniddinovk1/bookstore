@@ -52,7 +52,7 @@ class BookViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def top_rated(self, request):
-        top_books = Book.objects.annotate(avg_rating=models.Avg('comments__rating')).order_by('-avg_rating')[:4]
+        top_books = Book.objects.annotate(avg_rating=models.Avg('comments__rating')).order_by('-avg_rating')[:2]
         serializers = BookSerializer(top_books, many=True)
         return Response(serializers.data)
 

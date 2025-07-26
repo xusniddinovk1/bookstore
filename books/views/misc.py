@@ -33,13 +33,9 @@ class AuthorViewSet(viewsets.ModelViewSet):
         books_qs = Book.objects.filter(author=instance)
         books_titles = books_qs.values_list('title', flat=True)[:3]
 
-        related_books = books_qs.exclude(id__in=books_qs.values_list('id', flat=True)[:3])[:3]
-        related_serializer = BookSerializer(related_books, many=True)
-
         return Response({
             'author': serializer.data,
             'books': list(books_titles),
-            'related_books': related_serializer.data
         })
 
 
