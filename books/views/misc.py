@@ -29,12 +29,16 @@ class AuthorViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        books = Book.objects.filter(author=instance).values_list('title', flat=True)[:3]
-        related_books = Book.objects.filter(book=instance).exclude(id=instance.id)[:3]
+
+        books_qs = Book.objects.filter(author=instance)
+        books_titles = books_qs.values_list('title', flat=True)[:3]
+
+        related_books = books_qs.exclude(id__in=books_qs.values_list('id', flat=True)[:3])[:3]
         related_serializer = BookSerializer(related_books, many=True)
+
         return Response({
             'author': serializer.data,
-            'books': list(books),
+            'books': list(books_titles),
             'related_books': related_serializer.data
         })
 
