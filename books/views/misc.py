@@ -42,6 +42,6 @@ class AuthorViewSet(viewsets.ModelViewSet):
 class FlashSaleViewSet(viewsets.ModelViewSet):
     queryset = FlashSale.objects.all()
     serializer_class = FlashSaleSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAdminOrReadOnly]
     filter_backends = (django_filters.DjangoFilterBackend, filters.SearchFilter)
     filterset_class = FlashSaleFilter
